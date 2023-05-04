@@ -41,14 +41,29 @@ set "server_name=%server_name:"=%"
 
 
 rem 检测 Emacs server 是否正在运行
-call wsl emacsclient --server-file %server_name% --eval "(+ 2 2)"
+call wsl /root/.nix-profile/bin/emacsclient --server-file %server_name% --eval "(+ 2 2)"
 if %errorlevel% neq 0 (
     rem 如果Emacs server未运行，则启动之
-    call wsl emacs -nw --daemon=%server_name% 
+    @REM call wsl emacs -nw --daemon=%server_name% 
+    call wsl /root/.nix-profile/bin/emacs --daemon=%server_name% 
     @REM --with-x-toolkit=lucid
 )
 
-
+rem Convert Windows file path to WSL file path
+wsl wslpath  %file_path%
+echo 000
+echo a1 "%file_path%"
+set "file_path=%file_path:"=%"
+echo "a2 %file_path%"
+echo %wslpath%
+echo 1111
+@REM for /f "delims=" %%i in ('wslpath "%file_path%"') do set wsl_file_path=%%i
+echo ---
+echo %server_name% -n %line_num% %wslpath%  
+echo %server_name% -n %line_num% %file_path%  
+echo ====
 rem 使用 emacsclient 打开文件
-call wsl emacsclient --server-file %server_name%  -n %line_num% %file_path%  
+@REM call wsl /root/.nix-profile/bin/emacsclient  --server-file %server_name% -n %line_num% %file_path% 
+call wsl /root/.nix-profile/bin/emacsclient  -s %server_name% -n %line_num% %file_path%   
+@REM call wsl /root/.nix-profile/bin/emacs %file_path%  
 pause
