@@ -40,6 +40,6 @@ rem 使用 emacsclient 打开文件
 call emacsclient --server-file %server_name% -n %file_path%  
 echo %file_path%
 echo %%2%
-pause
+@REM pause
 
 
