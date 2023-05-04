@@ -18,7 +18,7 @@ for %%a in ("%file_path:\=" "%") do (
     set file_name=%%a
     
 )
-pause
+@REM pause
 
 :for_end
 
