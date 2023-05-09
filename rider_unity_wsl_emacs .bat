@@ -39,18 +39,23 @@ set server_name=%file_name%
 set "server_name=%server_name:"=%"
 
 
-
+@REM set EMACS_SERVER_FILE=/mnt/wslg/runtime-dir/emacs/%server_name%
+@REM /root/.emacs.d/
 rem 检测 Emacs server 是否正在运行
-call wsl /root/.nix-profile/bin/emacsclient --server-file %server_name% --eval "(+ 2 2)"
-if %errorlevel% neq 0 (
-    rem 如果Emacs server未运行，则启动之
-    @REM call wsl emacs -nw --daemon=%server_name% 
-    call wsl /root/.nix-profile/bin/emacs --daemon=%server_name% 
-    @REM --with-x-toolkit=lucid
-)
+@REM call wsl /root/.nix-profile/bin/emacsclient --server-file %EMACS_SERVER_FILE% --eval "(+ 2 2)"
+
+@REM 此段可想方法完善 现在有错误 
+
+@REM call wsl /root/.nix-profile/bin/emacsclient --server-file /root/.emacs.d/server/%server_name% --eval "(+ 2 2)"
+@REM if %errorlevel% neq 0 (
+@REM     rem 如果Emacs server未运行，则启动之
+@REM     @REM call wsl emacs -nw --daemon=%server_name% 
+@REM     call wsl /root/.nix-profile/bin/emacs --daemon=%server_name% 
+@REM     @REM --with-x-toolkit=lucid
+@REM )
 
 rem Convert Windows file path to WSL file path
-wsl wslpath  %file_path%
+@REM wsl wslpath  %file_path%
 echo 000
 echo a1 "%file_path%"
 set "file_path=%file_path:"=%"
@@ -61,9 +66,23 @@ echo 1111
 echo ---
 echo %server_name% -n %line_num% %wslpath%  
 echo %server_name% -n %line_num% %file_path%  
+@REM echo --server-file /mnt/wslg/runtime-dir/emacs/%server_name% -n %line_num% %file_path% 
 echo ====
+
+
+set "wslpath=%wslpath:"=%"
+rem Convert Windows file path to WSL file path
+wsl wslpath  "%file_path%"
+echo wsl wslpath %wslpaht% 00000  %file_path%
+for /f "delims=" %%i in ('wslpath "%file_path%"') do set wsl_file_path=%%i
+echo -------
+echo %server_name% -n %line_num% %file_path% 
 rem 使用 emacsclient 打开文件
-@REM call wsl /root/.nix-profile/bin/emacsclient  --server-file %server_name% -n %line_num% %file_path% 
-call wsl /root/.nix-profile/bin/emacsclient  -s %server_name% -n %line_num% %file_path%   
+@REM call wsl /root/.nix-profile/bin/emacsclient  --server-file %EMACS_SERVER_FILE% -n %line_num% %file_path% 
+@REM call wsl /root/.nix-profile/bin/emacsclient  --server-file /root/.emacs.d/server/%server_name% -n %line_num% %file_path% 
+@REM call wsl /home/hy/.nix-profile/bin/emacsclient  --socket-name %server_name% -n %line_num% %file_path% 
+@REM call wsl /home/hy/.nix-profile/bin/emacsclient  --socket-name %server_name% -n %line_num% %wsl_file_path% 
+call wsl /home/hy/.nix-profile/bin/emacsclient  --socket-name %server_name% -n %line_num% %file_path% 
+@REM call wsl /root/.nix-profile/bin/emacsclient  -s %server_name% -n %line_num% %file_path%   
 @REM call wsl /root/.nix-profile/bin/emacs %file_path%  
 pause
